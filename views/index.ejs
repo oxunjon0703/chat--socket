@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Socket.IO chat</title>
+</head>
+
+<body>
+
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off", placeholder="Send All"/><button>Send All</button>
+  </form>
+  <form id="form1" action="">
+    <input id="input1" autocomplete="off", placeholder="Send person" />
+    <input id="input2" autocomplete="off", placeholder="Send message" /><button>Send message</button>
+  </form>
+  <form id="form2" action="">
+    <input id="input3" autocomplete="off", placeholder="Users" /><button>Online Users All</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const form1 = document.getElementById('form1');
+    const input1 = document.getElementById('input1');
+    const input2 = document.getElementById('input2');
+    const form2 = document.getElementById('form2');
+
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('new-message', input.value);
+        input.value = '';
+      }
+    });
+
+    form1.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input1.value && input2.value) {
+        const data = {userId: input1.value, message: input2.value}
+        socket.emit('new-message-one', data);
+        input1.value = '';
+        input2.value = '';
+      }
+    });
+
+    form2.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input3.value){
+        socket.emit('users', input3.value);
+      };
+    });
+
+    socket.on("new-message", (data) => {
+      console.log("new-message : ", data);
+    })
+
+    socket.on("new-message-one", (data) => {
+      console.log("new-message-one: ", data);
+    })
+
+    socket.on("users", (data) => {
+      console.log("Online Users All : ", data);
+    })
+
+
+  </script>
+</body>
+
+</html>
